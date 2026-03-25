@@ -1,0 +1,20 @@
+{
+  "name": "iam-automation-platform",
+  "version": "1.0.0",
+  "description": "Simulated IAM Automation Platform — Joiner-Mover-Leaver Lifecycle Engine",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["iam", "rbac", "joiner-mover-leaver", "hackathon"],
+  "author": "IAM Platform",
+  "license": "MIT"
+}

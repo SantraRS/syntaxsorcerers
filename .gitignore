@@ -1,0 +1,30 @@
+# IDE/Editor-specific files
+.idea/                 # JetBrains IDEs (IntelliJ, PyCharm, etc.)
+.vscode/               # VS Code
+*.swp                  # Vim swap files
+*.sublime-project      # Sublime Text project files
+*.sublime-workspace    # Sublime Text workspace files
+
+# Operating System files
+.DS_Store              # macOS file
+Thumbs.db              # Windows file
+
+# Build artifacts and generated files
+/dist/                 # Common distribution folder
+/build/                # Common build folder
+/out/
+/tmp/                  # Temporary files and folders
+*.log                  # Log files
+npm-debug.log*         # npm debug logs
+yarn-debug.log*        # Yarn debug logs
+
+# Dependencies
+node_modules/          # Node.js dependencies
+
+# Environment variables and sensitive data
+.env                   # Environment variable files
+config.json            # Configuration files that might contain secrets
+secrets.txt            # Generic secrets file
+
+# Uploads (if managed by the application and not source code)
+/uploads/
