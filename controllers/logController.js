@@ -13,7 +13,12 @@ const { getAuditLogs } = require("../services/auditService");
  */
 async function listLogs(req, res) {
   try {
-    const logs = getAuditLogs();
+    const role = req.headers["x-user-role"];
+    let logs = getAuditLogs();
+
+    if (role === "hr" || role === "manager") {
+      logs = [];
+    }
 
     return res.status(200).json({
       success:      true,

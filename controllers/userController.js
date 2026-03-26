@@ -12,7 +12,12 @@ const { getUsers } = require("../models/userStore");
  */
 async function listUsers(req, res) {
   try {
-    const users = getUsers();
+    const role = req.headers["x-user-role"];
+    let users = getUsers();
+
+    if (role === "hr" || role === "manager") {
+      users = [];
+    }
 
     return res.status(200).json({
       success: true,

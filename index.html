@@ -434,6 +434,98 @@ body::before {
 .rbp.on { border-color: rgba(0,230,118,0.3); color: var(--green); background: rgba(0,230,118,0.06); }
 .rbp.off { border-color: rgba(255,82,82,0.2); color: var(--text3); background: transparent; }
 
+/* ── Login Overlay ───────────────────────────────────── */
+#loginOverlay {
+  position: fixed; inset: 0; z-index: 1100;
+  background: var(--bg);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center; gap: 28px;
+  transition: opacity 0.35s;
+  opacity: 0;
+}
+#loginOverlay.visible { display: flex; }
+#loginOverlay::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(179,136,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(179,136,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+.login-box {
+  width: 380px; padding: 40px 36px; border-radius: 22px;
+  background: var(--glass); border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  display: flex; flex-direction: column; gap: 22px;
+  position: relative; animation: fadeUp 0.35s ease;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+}
+.login-logo-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.login-logo-wrap svg { filter: drop-shadow(0 0 14px rgba(179,136,255,0.35)); }
+.login-logo-wrap h2 {
+  font-size: 22px; font-weight: 800; letter-spacing: 0.8px;
+  background: linear-gradient(90deg, #f7941d, #e8369e, #9b27b0);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.login-logo-wrap p { font-size: 12px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+.login-role-badge {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 9px 18px; border-radius: 30px;
+  font-size: 13px; font-weight: 700;
+  background: rgba(179,136,255,0.1); border: 1px solid rgba(179,136,255,0.3);
+  color: var(--purple); letter-spacing: 0.3px;
+}
+.login-role-badge .lr-icon { font-size: 18px; }
+.login-divider {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; color: var(--text3);
+}
+.login-divider::before, .login-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.login-field { display: flex; flex-direction: column; gap: 6px; }
+.login-field label { font-size: 11px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; }
+.login-input {
+  background: var(--glass2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 14px;
+  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13.5px;
+  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.login-input:focus { border-color: rgba(179,136,255,0.5); box-shadow: 0 0 0 3px rgba(179,136,255,0.08); }
+.login-input::placeholder { color: var(--text3); }
+.login-error {
+  font-size: 12px; color: var(--red); background: rgba(255,82,82,0.08);
+  border: 1px solid rgba(255,82,82,0.2); border-radius: 8px;
+  padding: 8px 12px; display: none; text-align: center;
+}
+.login-error.visible { display: block; }
+.login-btn {
+  width: 100%; padding: 13px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, #b388ff, #9b27b0);
+  color: #fff; font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: all 0.2s; letter-spacing: 0.3px;
+  box-shadow: 0 4px 20px rgba(155,39,176,0.35);
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(155,39,176,0.5); }
+.login-btn:disabled { opacity: .55; cursor: default; transform: none; }
+.login-back {
+  text-align: center; font-size: 12px; color: var(--text3);
+  cursor: pointer; transition: color 0.2s;
+  background: none; border: none; font-family: 'Inter', sans-serif;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.login-back:hover { color: var(--text2); }
+.login-hint {
+  font-size: 11px; color: var(--text3); text-align: center;
+  font-family: 'JetBrains Mono', monospace; line-height: 1.7;
+}
+
 /* ── Role indicator chip in header ───────────────────── */
 .role-indicator {
   padding: 5px 13px; border-radius: 20px;
@@ -534,6 +626,7 @@ body::before {
 }
 .export-btn:hover { color: var(--cyan); border-color: rgba(0,229,255,0.3); }
 </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 </head>
 <body>
 
@@ -559,35 +652,90 @@ body::before {
   </div>
   <div class="role-cards">
     <div class="role-card" onclick="selectRole('hr')">
-      <div class="role-card-icon">👤</div>
+      <div class="role-card-icon"><i class="fa-solid fa-user-tie"></i></div>
       <div class="role-card-title">HR</div>
       <div class="role-card-desc">Submit employee lifecycle requests via natural language chat</div>
       <div class="role-badge-preview">
-        <span class="rbp on">✅ Chat &amp; Requests</span>
-        <span class="rbp off">🚫 Approvals</span>
-        <span class="rbp off">🚫 Users &amp; Logs</span>
+        <span class="rbp on"><i class="fa-solid fa-check"></i> Chat &amp; Requests</span>
+        <span class="rbp off"><i class="fa-solid fa-ban"></i> Approvals</span>
+        <span class="rbp off"><i class="fa-solid fa-ban"></i> Users &amp; Logs</span>
       </div>
     </div>
     <div class="role-card" onclick="selectRole('manager')">
-      <div class="role-card-icon">📋</div>
+      <div class="role-card-icon"><i class="fa-solid fa-scroll"></i></div>
       <div class="role-card-title">Manager</div>
       <div class="role-card-desc">Review and approve or reject pending IAM requests</div>
       <div class="role-badge-preview">
-        <span class="rbp on">✅ Filter Bot + Chat</span>
-        <span class="rbp on">✅ Approval Panel</span>
-        <span class="rbp off">🚫 Users &amp; Logs</span>
+        <span class="rbp on"><i class="fa-solid fa-check"></i> Filter Bot + Chat</span>
+        <span class="rbp on"><i class="fa-solid fa-check"></i> Approval Panel</span>
+        <span class="rbp off"><i class="fa-solid fa-ban"></i> Users &amp; Logs</span>
       </div>
     </div>
     <div class="role-card" onclick="selectRole('itadmin')">
-      <div class="role-card-icon">⚙️</div>
+      <div class="role-card-icon"><i class="fa-solid fa-gear"></i></div>
       <div class="role-card-title">IT Admin</div>
       <div class="role-card-desc">Monitor the user directory and audit trail</div>
       <div class="role-badge-preview">
-        <span class="rbp on">✅ Query Bot + Chat</span>
-        <span class="rbp off">🚫 Approvals</span>
-        <span class="rbp on">✅ Users &amp; Logs</span>
+        <span class="rbp on"><i class="fa-solid fa-check"></i> Query Bot + Chat</span>
+        <span class="rbp off"><i class="fa-solid fa-ban"></i> Approvals</span>
+        <span class="rbp on"><i class="fa-solid fa-check"></i> Users &amp; Logs</span>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Login Overlay -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <!-- Logo -->
+    <div class="login-logo-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="64" height="64">
+        <defs>
+          <linearGradient id="lgrad" x1="10%" y1="90%" x2="90%" y2="10%">
+            <stop offset="0%" stop-color="#f7941d"/>
+            <stop offset="48%" stop-color="#e8369e"/>
+            <stop offset="100%" stop-color="#9b27b0"/>
+          </linearGradient>
+        </defs>
+        <ellipse cx="40" cy="18" rx="18" ry="28" fill="none" stroke="url(#lgrad)" stroke-width="8" stroke-linecap="round"/>
+        <ellipse cx="40" cy="18" rx="18" ry="28" fill="none" stroke="url(#lgrad)" stroke-width="8" stroke-linecap="round" transform="rotate(120,40,40)"/>
+        <ellipse cx="40" cy="18" rx="18" ry="28" fill="none" stroke="url(#lgrad)" stroke-width="8" stroke-linecap="round" transform="rotate(240,40,40)"/>
+      </svg>
+      <h2>GUARDIEN.AI</h2>
+      <p>Sign in to continue</p>
+    </div>
+
+    <!-- Pre-filled role badge -->
+    <div class="login-role-badge" id="loginRoleBadge">
+      <span class="lr-icon" id="loginRoleIcon"></span>
+      <span id="loginRoleLabel">Signing in…</span>
+    </div>
+
+    <div class="login-divider">credentials</div>
+
+    <!-- Username -->
+    <div class="login-field">
+      <label for="loginUsername">Username</label>
+      <input class="login-input" id="loginUsername" type="text" placeholder="Enter your username" autocomplete="username" onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+
+    <!-- Password -->
+    <div class="login-field">
+      <label for="loginPassword">Password</label>
+      <input class="login-input" id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()" />
+    </div>
+
+    <!-- Error -->
+    <div class="login-error" id="loginError">Invalid username or password.</div>
+
+    <!-- Submit -->
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i></button>
+
+    <!-- Hint (demo credentials) -->
+    <div class="login-hint" id="loginHint"></div>
+
+    <!-- Back -->
+    <button class="login-back" onclick="backToRoles()">← Back to role selection</button>
   </div>
 </div>
 
@@ -607,10 +755,10 @@ body::before {
       <ellipse cx="22" cy="10" rx="10" ry="16" fill="none" stroke="url(#sgrad)" stroke-width="4.5" stroke-linecap="round" transform="rotate(240,22,22)"/>
     </svg>
   </div>
-  <button class="nav-btn active" title="Chat" data-nav="chat" onclick="setNav(this,'chat')">💬</button>
-  <button class="nav-btn" title="Pending Approvals" data-nav="approvals" onclick="setNav(this,'approvals')" id="navApprovals">✅</button>
-  <button class="nav-btn" title="Users" data-nav="users" onclick="setNav(this,'users')">👥</button>
-  <button class="nav-btn" title="Audit Logs" data-nav="logs" onclick="setNav(this,'logs')">📋</button>
+  <button class="nav-btn active" title="Chat" data-nav="chat" onclick="setNav(this,'chat')"><i class="fa-solid fa-message"></i></button>
+  <button class="nav-btn" title="Pending Approvals" data-nav="approvals" onclick="setNav(this,'approvals')" id="navApprovals"><i class="fa-solid fa-clipboard-check"></i></button>
+  <button class="nav-btn" title="Users" data-nav="users" onclick="setNav(this,'users')"><i class="fa-solid fa-users"></i></button>
+  <button class="nav-btn" title="Audit Logs" data-nav="logs" onclick="setNav(this,'logs')"><i class="fa-solid fa-scroll"></i></button>
 </aside>
 
 <!-- Main -->
@@ -622,12 +770,12 @@ body::before {
       <p>Access Done Right · Joiner · Mover · Leaver Engine</p>
     </div>
     <div class="stat-chips">
-      <div class="chip">👥 <span id="hdr-users">0</span> Users</div>
-      <div class="chip">⏳ <span id="hdr-pending">0</span> Pending</div>
-      <div class="chip">📋 <span id="hdr-logs">0</span> Logs</div>
+      <div class="chip"><i class="fa-solid fa-users"></i> <span id="hdr-users">0</span> Users</div>
+      <div class="chip"><i class="fa-solid fa-hourglass-half"></i> <span id="hdr-pending">0</span> Pending</div>
+      <div class="chip"><i class="fa-solid fa-scroll"></i> <span id="hdr-logs">0</span> Logs</div>
     </div>
     <div class="role-indicator" id="roleIndicator" onclick="resetRole()" title="Click to switch role"></div>
-    <button class="reset-demo-btn" onclick="doResetDemo()" title="Clear all data and reload demo seed">🔄 Reset Demo</button>
+    <button class="reset-demo-btn" onclick="doResetDemo()" title="Clear all data and reload demo seed"><i class="fa-solid fa-arrow-rotate-left"></i> Reset Demo</button>
     <div class="status-dot" title="Server connected"></div>
     <span class="env-badge">SIMULATED ENV</span>
   </header>
@@ -639,13 +787,13 @@ body::before {
       <!-- Left: Chat -->
       <div class="panel-left" id="panel-chat" style="width:100%;display:flex;flex-direction:column;height:100%;">
         <div class="panel-hdr">
-          <span class="icon">💬</span>
+          <span class="icon"><i class="fa-solid fa-message"></i></span>
           <h2 id="chatPanelTitle">IAM Chat Interface</h2>
           <span id="chatPanelSub" style="font-size:11px;color:var(--text3)">Natural Language Commands</span>
         </div>
         <div class="chat-msgs" id="chatMsgs">
           <div class="msg system">
-            <div class="msg-avatar">🤖</div>
+            <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
             <div>
               <div class="msg-bubble">
                 Welcome to <strong>GUARDIEN.AI</strong>.<br><br>
@@ -659,14 +807,14 @@ body::before {
           </div>
         </div>
         <div id="chatSuggestions" class="chat-suggestions">
-          <div class="suggestion" onclick="fillChat('Onboard Sarah as Developer')">➕ Onboard Developer</div>
-          <div class="suggestion" onclick="fillChat('Onboard Alex as Manager')">➕ Onboard Manager</div>
-          <div class="suggestion" onclick="fillChat('Change role of ')">🔄 Change Role</div>
-          <div class="suggestion" onclick="fillChat('Offboard ')">❌ Offboard</div>
+          <div class="suggestion" onclick="fillChat('Onboard Sarah as Developer')"><i class="fa-solid fa-user-plus"></i> Onboard Developer</div>
+          <div class="suggestion" onclick="fillChat('Onboard Alex as Manager')"><i class="fa-solid fa-user-plus"></i> Onboard Manager</div>
+          <div class="suggestion" onclick="fillChat('Change role of ')"><i class="fa-solid fa-arrows-rotate"></i> Change Role</div>
+          <div class="suggestion" onclick="fillChat('Offboard ')"><i class="fa-solid fa-user-xmark"></i> Offboard</div>
         </div>
         <div class="chat-input-wrap">
           <textarea id="chatInput" rows="1" placeholder="Type a command… (Enter to send)"></textarea>
-          <button class="send-btn" id="sendBtn" onclick="sendChat()" title="Send (Enter)">➤</button>
+          <button class="send-btn" id="sendBtn" onclick="sendChat()" title="Send (Enter)"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
       </div>
     </div>
@@ -675,7 +823,7 @@ body::before {
     <div class="nav-panel" id="navpanel-approvals" style="flex-direction:column;overflow:hidden;">
       <div class="panel-right" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div class="tabs">
-          <div class="tab active" onclick="switchTab(this,'tab-approvals')" id="tabApprovals" data-tab-id="tab-approvals">✅ Approvals <span class="count-badge" id="pendingCount">0</span></div>
+          <div class="tab active" onclick="switchTab(this,'tab-approvals')" id="tabApprovals" data-tab-id="tab-approvals"><i class="fa-solid fa-clipboard-check"></i> Approvals <span class="count-badge" id="pendingCount">0</span></div>
         </div>
         <div class="tab-panel active" id="tab-approvals" style="flex:1;overflow-y:auto;padding:16px;">
           <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px">
@@ -685,7 +833,7 @@ body::before {
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
             </select>
-            <button class="refresh-btn" onclick="loadRequests()">↻ Refresh</button>
+            <button class="refresh-btn" onclick="loadRequests()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
           </div>
           <div class="approval-cards" id="approvalCards">
             <div class="empty-state"><div class="spinner"></div><span>Loading requests…</span></div>
@@ -698,7 +846,7 @@ body::before {
     <div class="nav-panel" id="navpanel-users" style="flex-direction:column;overflow:hidden;">
       <div class="panel-right" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div class="tabs">
-          <div class="tab active" data-tab-id="tab-users">👥 Users <span class="count-badge" id="usersCount">0</span></div>
+          <div class="tab active" data-tab-id="tab-users"><i class="fa-solid fa-users"></i> Users <span class="count-badge" id="usersCount">0</span></div>
         </div>
         <div class="tab-panel active" id="tab-users" style="flex:1;overflow-y:auto;padding:16px;">
           <div class="search-bar">
@@ -708,7 +856,7 @@ body::before {
               <option value="active">Active</option>
               <option value="disabled">Disabled</option>
             </select>
-            <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+            <button class="refresh-btn" onclick="loadUsers()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
           </div>
           <div class="users-grid" id="usersGrid">
             <div class="empty-state" style="grid-column:1/-1"><div class="spinner"></div><span>Loading users…</span></div>
@@ -721,17 +869,17 @@ body::before {
     <div class="nav-panel" id="navpanel-logs" style="flex-direction:column;overflow:hidden;">
       <div class="panel-right" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
         <div class="tabs">
-          <div class="tab active" data-tab-id="tab-logs">📋 Audit Logs <span class="count-badge" id="logsCount">0</span></div>
+          <div class="tab active" data-tab-id="tab-logs"><i class="fa-solid fa-scroll"></i> Audit Logs <span class="count-badge" id="logsCount">0</span></div>
         </div>
         <div class="tab-panel active" id="tab-logs" style="flex:1;overflow-y:auto;padding:16px;">
           <div class="search-bar">
             <input class="search-input" id="logSearch" placeholder="Search logs…" oninput="filterLogs()">
             <select class="filter-select" id="logCriticalFilter" onchange="filterLogs()">
               <option value="all">All Events</option>
-              <option value="critical">⚠️ Critical</option>
+              <option value="critical"><i class="fa-solid fa-triangle-exclamation"></i> Critical</option>
             </select>
-            <button class="export-btn" onclick="exportLogs()" title="Copy logs to clipboard">⬇ Export</button>
-            <button class="refresh-btn" onclick="loadLogs()">↻ Refresh</button>
+            <button class="export-btn" onclick="exportLogs()" title="Copy logs to clipboard"><i class="fa-solid fa-download"></i> Export</button>
+            <button class="refresh-btn" onclick="loadLogs()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
           </div>
           <div class="log-list" id="logList">
             <div class="empty-state"><div class="spinner"></div><span>Loading logs…</span></div>
@@ -745,7 +893,7 @@ body::before {
 <!-- LEAVER Confirm Dialog -->
 <div id="confirmOverlay">
   <div class="confirm-box">
-    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
     <div class="confirm-title">Confirm Offboarding</div>
     <div class="confirm-body" id="confirmBody">This is a critical action. The user's account will be disabled and all access revoked immediately.</div>
     <div class="confirm-actions">
@@ -761,11 +909,20 @@ body::before {
 <script>
 const API = 'http://localhost:3000';
 
+async function apiFetch(url, options = {}) {
+  options.headers = options.headers || {};
+  if (window._currentRole) options.headers['x-user-role'] = window._currentRole;
+  return fetch(url, options);
+}
+
+// ── Global state ────────────────────────────────────────
+let _activeTypeFilter = null;  // 'JOINER' | 'MOVER' | 'LEAVER' | null (set by chat, read by dropdown)
+
 // ── Role-Based Access Control ─────────────────────────
 const ROLE_CONFIG = {
-  hr:      { label: '👤 HR',       cls: 'ri-hr',      defaultTab: null },
-  manager: { label: '📋 Manager',  cls: 'ri-manager', defaultTab: 'tab-approvals' },
-  itadmin: { label: '⚙️ IT Admin', cls: 'ri-itadmin', defaultTab: 'tab-users' },
+  hr:      { label: '<i class="fa-solid fa-user-tie"></i> HR',       cls: 'ri-hr',      defaultTab: null },
+  manager: { label: '<i class="fa-solid fa-briefcase"></i> Manager',  cls: 'ri-manager', defaultTab: 'tab-approvals' },
+  itadmin: { label: '<i class="fa-solid fa-gear"></i> IT Admin', cls: 'ri-itadmin', defaultTab: 'tab-users' },
 };
 
 // ── Role state & chat config per role ───────────────────────────────
@@ -775,30 +932,107 @@ const CHAT_CONFIG = {
     hr: {
     title: 'GUARDIEN.AI Chat', sub: 'Natural Language Commands',
     welcome: 'Welcome, <strong>HR</strong>! Use natural language to manage lifecycle.<br><br>• <em>"Onboard John as Developer"</em><br>• <em>"Change role of Alice to Manager"</em><br>• <em>"Offboard Bob"</em>',
-    chips: [['➕ Onboard Developer','Onboard Sarah as Developer'],['➕ Onboard Manager','Onboard Alex as Manager'],['🔄 Change Role','Change role of '],['❌ Offboard','Offboard ']]
+    chips: [['<i class="fa-solid fa-user-plus"></i> Onboard Developer','Onboard Sarah as Developer'],['<i class="fa-solid fa-user-plus"></i> Onboard Manager','Onboard Alex as Manager'],['<i class="fa-solid fa-arrows-rotate"></i> Change Role','Change role of '],['<i class="fa-solid fa-user-xmark"></i> Offboard','Offboard ']]
   },
   manager: {
     title: 'GUARDIEN.AI — Approvals', sub: 'Review & Action Requests',
     welcome: 'Welcome, <strong>Manager</strong>! You have full approval authority.<br><br>• <em>"Show pending"</em> — awaiting your action<br>• <em>"Approve all pending"</em> — bulk approve<br>• <em>"Show joiners / movers / leavers"</em><br>• <em>"Stats"</em> — request counts',
-    chips: [['⏳ Pending','Show pending'],['🟢 Joiners','Show joiners'],['🔄 Movers','Show movers'],['📊 Stats','Stats']]
+    chips: [['<i class="fa-solid fa-hourglass-half"></i> Pending','Show pending'],['<i class="fa-solid fa-user-plus"></i> Joiners','Show joiners'],['<i class="fa-solid fa-arrows-rotate"></i> Movers','Show movers'],['<i class="fa-solid fa-chart-bar"></i> Stats','Stats']]
   },
   itadmin: {
     title: 'GUARDIEN.AI — Admin', sub: 'Search Users & Logs',
-    welcome: 'Welcome, <strong>IT Admin</strong>! Query users and audit logs.<br><br>• <em>"Show active users"</em> / <em>"Show disabled"</em><br>• <em>"Show developers"</em> / <em>"Show managers"</em><br>• <em>"Show critical logs"</em><br>• <em>"Stats"</em> · <em>"Reset"</em>',
-    chips: [['✅ Active Users','Show active users'],['⚠️ Critical Logs','Show critical logs'],['📊 Stats','Stats'],['🔄 Reset','Reset']]
+    welcome: 'Welcome, <strong>IT Admin</strong>! Query users and audit logs.<br><br>• <em>"Show active users"</em> / <em>"Show disabled"</em><br>• <em>"Show developers"</em> / <em>"Show managers"</em><br>• <em>"Show critical logs"</em><br>• <em>"Stats"</em> · <em>"Clear filters"</em>',
+    chips: [['<i class="fa-solid fa-user-check"></i> Active','Show active users'],['<i class="fa-solid fa-triangle-exclamation"></i> Critical Logs','Show critical logs'],['<i class="fa-solid fa-chart-bar"></i> Stats','Stats'],['<i class="fa-solid fa-filter-circle-xmark"></i> Clear','Clear filters']]
   }
 };
 
+// ── Demo credentials hint per role ──────────────────────
+const DEMO_CREDS = {
+  hr:      { icon: '<i class="fa-solid fa-user-tie"></i>', label: 'HR',       username: 'hr_user',  hint: 'hr_user / hr123' },
+  manager: { icon: '<i class="fa-solid fa-briefcase"></i>', label: 'Manager',  username: 'manager',  hint: 'manager / mgr123' },
+  itadmin: { icon: '<i class="fa-solid fa-gear"></i>', label: 'IT Admin', username: 'it_admin', hint: 'it_admin / admin123' },
+};
+
+let _pendingRole = null;
+
+// Clicking a role card → show login overlay with role pre-filled
 function selectRole(role) {
-  const overlay = document.getElementById('roleOverlay');
-  overlay.style.opacity = '0';
-  setTimeout(() => { overlay.style.display = 'none'; }, 400);
+  _pendingRole = role;
+  const roleOverlay = document.getElementById('roleOverlay');
+  roleOverlay.style.opacity = '0';
+  setTimeout(() => { roleOverlay.style.display = 'none'; }, 350);
+
+  const creds = DEMO_CREDS[role];
+  document.getElementById('loginRoleIcon').innerHTML  = creds.icon;
+  document.getElementById('loginRoleLabel').innerHTML = creds.label;
+  document.getElementById('loginHint').innerHTML      = '<i class="fa-solid fa-key"></i> Demo: ' + creds.hint;
+  document.getElementById('loginUsername').value   = '';
+  document.getElementById('loginPassword').value   = '';
+  document.getElementById('loginError').classList.remove('visible');
+  document.getElementById('loginBtn').disabled     = false;
+
+  const loginOverlay = document.getElementById('loginOverlay');
+  loginOverlay.classList.add('visible');
+  requestAnimationFrame(() => { loginOverlay.style.opacity = '1'; });
+  setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+}
+
+// Submit login form → validate via backend
+async function doLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl    = document.getElementById('loginError');
+  const btn      = document.getElementById('loginBtn');
+
+  errEl.classList.remove('visible');
+  if (!username || !password) {
+    errEl.textContent = 'Please enter both username and password.';
+    errEl.classList.add('visible');
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.innerHTML = 'Signing in…';
+
+  try {
+    const res  = await apiFetch(`${API}/auth/login`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ username, password }),
+    });
+    const data = await res.json();
+
+    if (!data.success) {
+      errEl.textContent = data.error || 'Invalid username or password.';
+      errEl.classList.add('visible');
+      btn.disabled    = false;
+      btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>';
+      return;
+    }
+
+    // ── Successful login — enter dashboard ──────────────
+    const loginOverlay = document.getElementById('loginOverlay');
+    loginOverlay.style.opacity = '0';
+    setTimeout(() => { loginOverlay.classList.remove('visible'); }, 350);
+
+    enterDashboard(data.role);
+
+  } catch (err) {
+    errEl.textContent = 'Cannot reach server. Is the backend running?';
+    errEl.classList.add('visible');
+    btn.disabled    = false;
+    btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>';
+  }
+}
+
+// Enter the main dashboard for the given role (extracted from old selectRole)
+function enterDashboard(role) {
   _currentRole = role;
   document.body.classList.remove('role-hr','role-manager','role-itadmin');
   document.body.classList.add(`role-${role}`);
   const ind = document.getElementById('roleIndicator');
   const cfg = ROLE_CONFIG[role];
-  ind.textContent = cfg.label + ' ↩';
+  ind.innerHTML = cfg.label + ' <span style="opacity:0.5">↩</span>';
   ind.className = `role-indicator visible ${cfg.cls}`;
   const cc = CHAT_CONFIG[role];
   document.getElementById('chatPanelTitle').textContent = cc.title;
@@ -809,24 +1043,50 @@ function selectRole(role) {
   const msgs = document.getElementById('chatMsgs');
   msgs.innerHTML = '';
   appendMsg('system', cc.welcome);
-  // Navigate to the role's default panel
+  // ── Always reset nav to chat first (prevents stale panel state from previous role) ──
+  document.querySelectorAll('.nav-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const chatPanel = document.getElementById('navpanel-chat');
+  if (chatPanel) chatPanel.classList.add('active');
+  const chatNavBtn = document.querySelector('[data-nav="chat"]');
+  if (chatNavBtn) chatNavBtn.classList.add('active');
+
+  // Then navigate to the role's default panel (if any; HR stays on chat)
   const panelMap = { 'tab-approvals': 'approvals', 'tab-users': 'users' };
   if (cfg.defaultTab && panelMap[cfg.defaultTab]) {
     setNavById(panelMap[cfg.defaultTab]);
-    // Also switch the nav-btn active state
     const navBtn = document.querySelector(`[data-nav="${panelMap[cfg.defaultTab]}"]`);
     if (navBtn) { document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); navBtn.classList.add('active'); }
   }
-  toast(`Logged in as ${cfg.label.split(' ').slice(1).join(' ')}`, 'info', 3000);
+  toast(`Welcome, ${cfg.label.replace(/<[^>]*>/g, '').trim().replace(' ↩','')}!`, 'success', 3000);
+  btn_reset();
 }
 
+// Reset btn text helper (btn may not exist at scope)
+function btn_reset() {
+  const btn = document.getElementById('loginBtn');
+  if (btn) { btn.disabled = false; btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>'; }
+}
+
+// Back button on login → return to role selector
+function backToRoles() {
+  const loginOverlay = document.getElementById('loginOverlay');
+  loginOverlay.style.opacity = '0';
+  setTimeout(() => { loginOverlay.classList.remove('visible'); }, 350);
+  const roleOverlay = document.getElementById('roleOverlay');
+  roleOverlay.style.display = 'flex'; roleOverlay.style.opacity = '0';
+  requestAnimationFrame(() => { roleOverlay.style.opacity = '1'; });
+  _pendingRole = null;
+}
+
+// Role indicator (header) → back to role selector (passes through login again)
 function resetRole() {
   _currentRole = null;
   document.body.classList.remove('role-hr','role-manager','role-itadmin');
   document.getElementById('roleIndicator').className = 'role-indicator';
-  const overlay = document.getElementById('roleOverlay');
-  overlay.style.display = 'flex'; overlay.style.opacity = '0';
-  requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+  const roleOverlay = document.getElementById('roleOverlay');
+  roleOverlay.style.display = 'flex'; roleOverlay.style.opacity = '0';
+  requestAnimationFrame(() => { roleOverlay.style.opacity = '1'; });
 }
 
 // ── Manager Filter Bot ────────────────────────────────────
@@ -834,57 +1094,90 @@ async function handleManagerChat(msg) {
   const m = msg.toLowerCase();
   let data;
   try {
-    const res = await fetch(`${API}/requests`);
+    const res = await apiFetch(`${API}/requests`);
     data = await res.json();
-  } catch { appendMsg('system', '⚠️ Cannot reach backend.'); return; }
-  const all = data.requests || [];
+  } catch { appendMsg('system', '<i class="fa-solid fa-wifi"></i> Cannot reach backend.'); return; }
+  const all = (data.requests || []).filter(r => r.type !== 'LEAVER'); // Manager never sees offboarding records
+  // Always update local cache (full list)
+  _allRequests = data.requests || [];
 
   // Stats
   if (/\b(stats?|summary|count|how many)\b/.test(m)) {
-    const p = all.filter(r=>r.status==='pending').length;
-    const a = all.filter(r=>r.status==='approved').length;
+    const p  = all.filter(r=>r.status==='pending').length;
+    const a  = all.filter(r=>r.status==='approved').length;
     const rj = all.filter(r=>r.status==='rejected').length;
-    appendMsg('system', `📊 <strong>Request Summary</strong><br>⏳ Pending: <strong>${p}</strong><br>✅ Approved: <strong>${a}</strong><br>❌ Rejected: <strong>${rj}</strong><br>📋 Total: <strong>${all.length}</strong>`); return;
+    const j  = all.filter(r=>r.type==='JOINER').length;
+    const mv = all.filter(r=>r.type==='MOVER').length;
+    const lv = all.filter(r=>r.type==='LEAVER').length;
+    appendMsg('system', `<i class="fa-solid fa-chart-bar"></i> <strong>Request Summary</strong><br><i class="fa-solid fa-hourglass-half"></i> Pending: <strong>${p}</strong><br><i class="fa-solid fa-circle-check"></i> Approved: <strong>${a}</strong><br><i class="fa-solid fa-circle-xmark"></i> Rejected: <strong>${rj}</strong><br><i class="fa-solid fa-list"></i> Total: <strong>${all.length}</strong><br><br><i class="fa-solid fa-user-plus"></i> Joiners: <strong>${j}</strong> &nbsp; <i class="fa-solid fa-arrows-rotate"></i> Movers: <strong>${mv}</strong> &nbsp; <i class="fa-solid fa-user-xmark"></i> Leavers: <strong>${lv}</strong>`); return;
   }
+
   // Bulk approve
   if (/approve all|approve pending/.test(m)) {
     const pend = all.filter(r=>r.status==='pending');
-    if (!pend.length) { appendMsg('system', '✅ No pending requests.'); return; }
-    appendMsg('system', `⏳ Approving <strong>${pend.length}</strong> request${pend.length!==1?'s':''}...`);
-    for (const r of pend) await fetch(`${API}/approve/${r.id}`,{method:'POST'});
-    await loadRequests(); refreshCounts();
-    appendMsg('system', `✅ Approved <strong>${pend.length}</strong> request${pend.length!==1?'s':''}.`); return;
+    if (!pend.length) { appendMsg('system', '<i class="fa-solid fa-circle-check"></i> No pending requests.'); return; }
+    appendMsg('system', `<i class="fa-solid fa-hourglass-half"></i> Approving <strong>${pend.length}</strong> request${pend.length!==1?'s':''}...`);
+    for (const r of pend) await apiFetch(`${API}/approve/${r.id}`,{method:'POST'});
+    // Reload fresh data then show all
+    const fresh = await apiFetch(`${API}/requests`).then(r=>r.json());
+    _allRequests = fresh.requests || [];
+    showFilteredApprovals(_allRequests.slice().reverse(), { statusDropdown:'all', typeFilter:null });
+    refreshCounts();
+    appendMsg('system', `<i class="fa-solid fa-circle-check"></i> Approved <strong>${pend.length}</strong> request${pend.length!==1?'s':''}.`); return;
   }
 
-  // Filter helpers
-  const filters = [
-    [/\bpending\b/,  r=>r.status==='pending',  'pending'],
-    [/\bapproved\b/, r=>r.status==='approved', 'approved'],
-    [/\brejected\b/, r=>r.status==='rejected', 'rejected'],
-    [/\bjoiner/,     r=>r.type==='JOINER',      'JOINER'],
-    [/\bmover/,      r=>r.type==='MOVER',       'MOVER'],
-    [/\bleaver/,     r=>r.type==='LEAVER',      'LEAVER'],
-    [/developer/,   r=>r.role&&r.role.toLowerCase().includes('developer'), 'Developer'],
-    [/\bmanager/,   r=>r.role&&r.role.toLowerCase().includes('manager'),  'Manager'],
-    [/\badmin/,     r=>r.role&&r.role.toLowerCase().includes('admin'),    'Admin'],
-    [/\bhr\b/,      r=>r.role&&r.role.toLowerCase().includes('hr'),       'HR'],
+  // Status filters
+  const statusFilters = [
+    [/\bpending\b/,  r=>r.status==='pending',  'pending',  'all', 'Pending'],
+    [/\bapproved\b/, r=>r.status==='approved', 'approved', 'approved', 'Approved'],
+    [/\brejected\b/, r=>r.status==='rejected', 'rejected', 'rejected', 'Rejected'],
   ];
-  for (const [re, fn, label] of filters) {
+  for (const [re, fn, dropdownVal, , label] of statusFilters) {
     if (re.test(m)) {
       const res = all.filter(fn);
-      setNavById('approvals');
-      renderFilteredRequests(res);
+      showFilteredApprovals(res.slice().reverse(), { statusDropdown: dropdownVal, typeFilter: null });
       appendMsg('system', `Showing <strong>${res.length}</strong> ${label} request${res.length!==1?'s':''}.`);
       return;
     }
   }
-  // Reset
+
+  // Type filters (JOINER / MOVER / LEAVER)
+  const typeFilters = [
+    [/\bjoiner/,  r=>r.type==='JOINER', 'JOINER',  'Joiner'],
+    [/\bmover/,   r=>r.type==='MOVER',  'MOVER',   'Mover'],
+    [/\bleaver/,  r=>r.type==='LEAVER', 'LEAVER',  'Leaver'],
+  ];
+  for (const [re, fn, typeVal, label] of typeFilters) {
+    if (re.test(m)) {
+      const res = all.filter(fn);
+      showFilteredApprovals(res.slice().reverse(), { statusDropdown:'all', typeFilter: typeVal });
+      appendMsg('system', `Showing <strong>${res.length}</strong> ${label} request${res.length!==1?'s':''}.`);
+      return;
+    }
+  }
+
+  // Role-based filters
+  const roleFilters = [
+    [/developer/,  r=>r.role&&r.role.toLowerCase().includes('developer'), 'Developer'],
+    [/\bmanager/,  r=>r.role&&r.role.toLowerCase().includes('manager'),   'Manager'],
+    [/\badmin/,    r=>r.role&&r.role.toLowerCase().includes('admin'),     'Admin'],
+    [/\bhr\b/,     r=>r.role&&r.role.toLowerCase().includes('hr'),        'HR'],
+  ];
+  for (const [re, fn, label] of roleFilters) {
+    if (re.test(m)) {
+      const res = all.filter(fn);
+      showFilteredApprovals(res.slice().reverse(), { statusDropdown:'all', typeFilter: null });
+      appendMsg('system', `Showing <strong>${res.length}</strong> ${label} request${res.length!==1?'s':''}.`);
+      return;
+    }
+  }
+
+  // Show all / reset
   if (/\b(all|reset|show all|clear)\b/.test(m)) {
-    setNavById('approvals');
-    renderFilteredRequests(all);
+    showFilteredApprovals(all.slice().reverse(), { statusDropdown:'all', typeFilter: null });
     appendMsg('system', `Showing all <strong>${all.length}</strong> requests.`); return;
   }
-  appendMsg('system', 'ℹ️ Try: <em>"Show pending"</em>, <em>"Show joiners"</em>, <em>"Approve all pending"</em>, or <em>"Stats"</em>.');
+  appendMsg('system', 'ℹ Try: <em>"Show pending"</em>, <em>"Show joiners"</em>, <em>"Approve all pending"</em>, or <em>"Stats"</em>.');
 }
 
 // ── IT Admin Query Bot ─────────────────────────────────
@@ -892,19 +1185,19 @@ async function handleITAdminChat(msg) {
   const m = msg.toLowerCase();
   // Stats
   if (/\b(stats?|summary|how many)\b/.test(m)) {
-    const [ur,lr] = await Promise.all([fetch(`${API}/users`).then(r=>r.json()),fetch(`${API}/logs`).then(r=>r.json())]);
+    const [ur,lr] = await Promise.all([apiFetch(`${API}/users`).then(r=>r.json()),apiFetch(`${API}/logs`).then(r=>r.json())]);
     const act = (ur.users||[]).filter(u=>u.status==='active').length;
     const dis = (ur.users||[]).filter(u=>u.status==='disabled').length;
     const crit = (lr.logs||[]).filter(l=>l.critical).length;
-    appendMsg('system', `📊 <strong>Platform Summary</strong><br>👥 Active: <strong>${act}</strong><br>🔴 Disabled: <strong>${dis}</strong><br>📋 Total logs: <strong>${lr.count||0}</strong><br>⚠️ Critical: <strong>${crit}</strong>`); return;
+    appendMsg('system', `<i class="fa-solid fa-chart-bar"></i> <strong>Platform Summary</strong><br><i class="fa-solid fa-user-check"></i> Active: <strong>${act}</strong><br><i class="fa-solid fa-user-slash"></i> Disabled: <strong>${dis}</strong><br><i class="fa-solid fa-list"></i> Total logs: <strong>${lr.count||0}</strong><br><i class="fa-solid fa-triangle-exclamation"></i> Critical: <strong>${crit}</strong>`); return;
   }
-  // Critical logs
+  // Critical logs — navigate to logs panel first, then render filter
   if (/critical/.test(m)) {
-    const lr = await fetch(`${API}/logs`).then(r=>r.json());
+    const lr = await apiFetch(`${API}/logs`).then(r=>r.json());
     const crit = (lr.logs||[]).filter(l=>l.critical);
-    switchTab(document.querySelector('[data-tab-id="tab-logs"]'),'tab-logs');
-    renderFilteredLogs(crit);
-    appendMsg('system', `⚠️ <strong>${crit.length}</strong> critical event${crit.length!==1?'s':''}.`); return;
+    setNavById('logs');
+    setTimeout(() => renderFilteredLogs(crit), 50);
+    appendMsg('system', `<i class="fa-solid fa-triangle-exclamation"></i> <strong>${crit.length}</strong> critical event${crit.length!==1?'s':''}.`); return;
   }
   // User filters
   const userFilters = [
@@ -917,25 +1210,25 @@ async function handleITAdminChat(msg) {
   ];
   for (const [re, fn, label] of userFilters) {
     if (re.test(m)) {
-      const ur = await fetch(`${API}/users`).then(r=>r.json());
+      const ur = await apiFetch(`${API}/users`).then(r=>r.json());
       const res = (ur.users||[]).filter(fn);
       setNavById('users');
       renderFilteredUsers(res);
-      appendMsg('system', `👥 <strong>${res.length}</strong> ${label} user${res.length!==1?'s':''}.`); return;
+      appendMsg('system', `<i class="fa-solid fa-users"></i> <strong>${res.length}</strong> ${label} user${res.length!==1?'s':''}.`); return;
     }
   }
   // Switch tabs
-  if (/log|audit|event/.test(m))  { setNavById('logs');  loadLogs();  appendMsg('system','📋 Showing audit logs.'); return; }
-  if (/user|employee|staff/.test(m)) { setNavById('users'); loadUsers(); appendMsg('system','👥 Showing all users.'); return; }
-  // Reset
-  if (/reset|all|clear/.test(m)) { loadUsers(); loadLogs(); appendMsg('system','✅ Filters cleared.'); return; }
-  appendMsg('system', 'ℹ️ Try: <em>"Show active users"</em>, <em>"Show critical logs"</em>, <em>"Show developers"</em>, or <em>"Stats"</em>.');
+  if (/log|audit|event/.test(m))  { setNavById('logs');  loadLogs();  appendMsg('system','<i class="fa-solid fa-scroll"></i> Showing audit logs.'); return; }
+  if (/user|employee|staff/.test(m)) { setNavById('users'); loadUsers(); appendMsg('system','<i class="fa-solid fa-users"></i> Showing all users.'); return; }
+  // Clear filters — reload both panels
+  if (/\b(clear|filter)\b/.test(m)) { loadUsers(); loadLogs(); appendMsg('system','<i class="fa-solid fa-circle-check"></i> Filters cleared.'); return; }
+  appendMsg('system', 'ℹ Try: <em>"Show active users"</em>, <em>"Show critical logs"</em>, <em>"Show developers"</em>, or <em>"Stats"</em>.');
 }
 
 // ── Filter render helpers ─────────────────────────────────
 function renderFilteredRequests(requests) {
   const el = document.getElementById('approvalCards');
-  if (!requests.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><span>No matching requests</span></div>'; return; }
+  if (!requests.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><span>No matching requests</span></div>'; return; }
   el.innerHTML = requests.slice().reverse().map(r=>{
     const init=r.user?r.user[0].toUpperCase():'?', isPending=r.status==='pending';
     const stCls=r.status==='approved'?'st-approved':r.status==='rejected'?'st-rejected':'st-pending';
@@ -944,7 +1237,7 @@ function renderFilteredRequests(requests) {
 }
 function renderFilteredUsers(users) {
   const el = document.getElementById('usersGrid');
-  if (!users.length) { el.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><span>No matching users</span></div>'; return; }
+  if (!users.length) { el.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><span>No matching users</span></div>'; return; }
   el.innerHTML = users.map(u=>{
     const init=u.name?u.name[0].toUpperCase():'?', dis=u.status==='disabled';
     const sys=(u.access||[]).map(s=>`<span class="sys-tag">${s}</span>`).join('');
@@ -953,14 +1246,14 @@ function renderFilteredUsers(users) {
 }
 function renderFilteredLogs(logs) {
   const el = document.getElementById('logList');
-  if (!logs.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><span>No matching logs</span></div>'; return; }
-  el.innerHTML = logs.map(l=>`<div class="log-entry ${l.critical?'critical':''}"><div class="log-dot ld-${l.status.replace(/\s/g,'')}"></div><div class="log-body"><span class="log-user">${escHtml(l.user)}</span><span class="log-action"> — ${escHtml(l.action)}</span>${l.critical?' <span class="critical-flag">⚠ CRITICAL</span>':''} ${l.details?`<div class="log-detail">${escHtml(l.details)}</div>`:''}</div><div><div class="log-time">${relTime(l.timestamp)}</div><div class="status-tag st-${l.status.toLowerCase()}" style="font-size:10px;margin-top:4px">${l.status}</div></div></div>`).join('');
+  if (!logs.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><span>No matching logs</span></div>'; return; }
+  el.innerHTML = logs.map(l=>`<div class="log-entry ${l.critical?'critical':''}"><div class="log-dot ld-${l.status.replace(/\s/g,'')}"></div><div class="log-body"><span class="log-user">${escHtml(l.user)}</span><span class="log-action"> — ${escHtml(l.action)}</span>${l.critical?' <span class="critical-flag"><i class="fa-solid fa-triangle-exclamation"></i> CRITICAL</span>':''} ${l.details?`<div class="log-detail">${escHtml(l.details)}</div>`:''}</div><div><div class="log-time">${relTime(l.timestamp)}</div><div class="status-tag st-${l.status.toLowerCase()}" style="font-size:10px;margin-top:4px">${l.status}</div></div></div>`).join('');
 }
 
 
 // ── Toast ───────────────────────────────────────────
 function toast(msg, type = 'info', duration = 4000) {
-  const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  const icons = { success:'<i class="fa-solid fa-circle-check"></i>', error:'<i class="fa-solid fa-circle-xmark"></i>', info:'<i class="fa-solid fa-circle-info"></i>', warning:'<i class="fa-solid fa-triangle-exclamation"></i>' };
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
@@ -1047,7 +1340,7 @@ function appendMsg(role, html, meta = '') {
   const msgs = document.getElementById('chatMsgs');
   const div = document.createElement('div');
   div.className = `msg ${role}`;
-  const avatar = role === 'user' ? '👤' : '🤖';
+  const avatar = role === 'user' ? '<i class="fa-solid fa-circle-user"></i>' : '<i class="fa-solid fa-robot"></i>';
   div.innerHTML = `<div class="msg-avatar">${avatar}</div><div><div class="msg-bubble">${html}</div><div class="msg-meta">${meta || (role==='user'?'You':'IAM Bot')} · Just now</div></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -1066,11 +1359,11 @@ async function sendChat() {
 
   // Route to role-specific filter bot for Manager and IT Admin
   if (_currentRole === 'manager') {
-    try { await handleManagerChat(msg); } catch(e) { appendMsg('system', '⚠️ Error processing command.'); }
+    try { await handleManagerChat(msg); } catch(e) { appendMsg('system', '<i class="fa-solid fa-triangle-exclamation"></i> Error processing command.'); }
     btn.disabled = false; refreshCounts(); return;
   }
   if (_currentRole === 'itadmin') {
-    try { await handleITAdminChat(msg); } catch(e) { appendMsg('system', '⚠️ Error processing command.'); }
+    try { await handleITAdminChat(msg); } catch(e) { appendMsg('system', '<i class="fa-solid fa-triangle-exclamation"></i> Error processing command.'); }
     btn.disabled = false; refreshCounts(); return;
   }
 
@@ -1079,14 +1372,14 @@ async function sendChat() {
   if (_currentRole === 'hr' && isLeaverMsg) {
     const confirmed = await showConfirm(msg);
     if (!confirmed) {
-      appendMsg('system', '🚫 Offboarding cancelled.');
+      appendMsg('system', '<i class="fa-solid fa-ban"></i> Offboarding cancelled.');
       btn.disabled = false;
       return;
     }
   }
 
   try {
-    const res = await fetch(`${API}/chat`, {
+    const res = await apiFetch(`${API}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: msg })
@@ -1094,7 +1387,7 @@ async function sendChat() {
     const data = await res.json();
 
     if (!data.success) {
-      appendMsg('system', `⚠️ ${escHtml(data.error || 'Unknown error')}`);
+      appendMsg('system', `<i class="fa-solid fa-triangle-exclamation"></i> ${escHtml(data.error || 'Unknown error')}`);
       toast(data.error || 'Error', 'error');
     } else {
       const { parsed, request, workflow } = data;
@@ -1104,19 +1397,23 @@ async function sendChat() {
       if (parsed.userName) body += `<strong>Employee:</strong> ${escHtml(parsed.userName)}<br>`;
       if (parsed.role)     body += `<strong>Role:</strong> ${escHtml(parsed.role)}<br>`;
       if (request.status === 'pending') {
-        body += `<br>⏳ Awaiting approval. Switch to the <strong>Approvals</strong> tab to review.`;
+        // HR cannot see the Approvals tab — give role-appropriate message
+        const pendingMsg = (_currentRole === 'hr')
+          ? `<i class="fa-solid fa-hourglass-half"></i> Submitted for approval. A manager will review the request.`
+          : `<i class="fa-solid fa-hourglass-half"></i> Awaiting approval. Switch to the <strong>Approvals</strong> tab to review.`;
+        body += `<br>${pendingMsg}`;
         toast(`Pending approval for ${parsed.userName}`, 'warning');
       } else if (workflow?.success) {
-        body += `<br>✅ ${escHtml(workflow.message)}`;
+        body += `<br><i class="fa-solid fa-circle-check"></i> ${escHtml(workflow.message)}`;
         toast(workflow.message, 'success');
       } else if (workflow && !workflow.success) {
-        body += `<br>⚠️ ${escHtml(workflow.message)}`;
+        body += `<br><i class="fa-solid fa-triangle-exclamation"></i> ${escHtml(workflow.message)}`;
         toast(workflow.message, 'error');
       }
       appendMsg('system', body);
     }
   } catch(e) {
-    appendMsg('system', '⚠️ Cannot reach the backend. Is the server running at <code>localhost:3000</code>?');
+    appendMsg('system', '<i class="fa-solid fa-triangle-exclamation"></i> Cannot reach the backend. Is the server running at <code>localhost:3000</code>?');
     toast('Backend unreachable', 'error');
   }
 
@@ -1127,57 +1424,75 @@ async function sendChat() {
 
 // ── Approvals ─────────────────────────────────────────
 async function loadRequests() {
-  const el = document.getElementById('approvalCards');
   try {
-    const res  = await fetch(`${API}/requests`);
+    const res  = await apiFetch(`${API}/requests`);
     const data = await res.json();
     _allRequests = data.requests || [];
-    const pending = _allRequests.filter(r => r.status === 'pending');
-    const all     = _allRequests;
-
-    document.getElementById('pendingCount').textContent = pending.length;
-    if (pending.length > 0) {
-      const badge = document.querySelector('#navApprovals .badge') || (() => {
-        const b = document.createElement('div'); b.className='badge';
-        document.getElementById('navApprovals').appendChild(b); return b;
-      })();
-    }
-
-    if (all.length === 0) {
-      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><span>No requests yet</span></div>';
-      return;
-    }
-
-    el.innerHTML = all.slice().reverse().map(r => {
-      const init = r.user ? r.user[0].toUpperCase() : '?';
-      const isPending = r.status === 'pending';
-      const stClass = r.status === 'approved' ? 'st-approved' : r.status === 'rejected' ? 'st-rejected' : 'st-pending';
-      return `
-      <div class="approval-card" id="card-${r.id}">
-        <div class="ac-top">
-          <div class="ac-avatar ac-${r.type}">${init}</div>
-          <div class="ac-info">
-            <h3>${escHtml(r.user)} <span class="intent-tag intent-${r.type}" style="margin-left:4px">${r.type}</span></h3>
-            <p>${r.role ? '→ ' + r.role : 'Offboarding'}  <span class="status-tag ${stClass}">${r.status}</span></p>
-          </div>
-          ${isPending ? `
-          <div class="ac-actions">
-            <button class="ac-btn approve" onclick="doApprove('${r.id}')">✓ Approve</button>
-            <button class="ac-btn reject"  onclick="doReject('${r.id}')">✗ Reject</button>
-          </div>` : ''}
-        </div>
-        <div class="ac-id">ID: ${r.id}</div>
-        <div class="ac-id" style="margin-top:2px">Created: ${relTime(r.createdAt)}</div>
-      </div>`;
-    }).join('');
+    document.getElementById('pendingCount').textContent =
+      _allRequests.filter(r => r.status === 'pending').length;
+    // Always route through filterApprovals() — respects active chat/dropdown filter
+    filterApprovals();
   } catch(e) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><span>Could not load requests</span></div>';
+    document.getElementById('approvalCards').innerHTML =
+      '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span>Could not load requests</span></div>';
   }
 }
 
+
+// ── Dropdown filter on Approvals panel ─────────────────
+// Called by the <select id="approvalFilter"> onchange
+function filterApprovals() {
+  const statusVal = document.getElementById('approvalFilter').value;
+  let filtered = _allRequests.slice();
+
+  // Manager cannot see offboarding records — only IT Admin has that visibility
+  if (_currentRole === 'manager') {
+    filtered = filtered.filter(r => r.type !== 'LEAVER');
+  }
+
+  // Apply status filter from dropdown
+  if (statusVal !== 'all') {
+    filtered = filtered.filter(r => r.status === statusVal);
+  }
+  // Respect any active type filter set by the Manager chat bot
+  if (_activeTypeFilter) {
+    filtered = filtered.filter(r => r.type === _activeTypeFilter);
+  }
+
+  renderFilteredRequests(filtered.slice().reverse());
+}
+
+// ── Navigate to approvals and show specific filtered data ─
+// Fixes the race condition: navigates WITHOUT calling loadRequests();
+// then renders the filtered subset and syncs the dropdown.
+function showFilteredApprovals(filtered, { statusDropdown = 'all', typeFilter = null, label = '' } = {}) {
+  // 1. Switch nav panel without triggering loadRequests()
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-panel').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector('[data-nav="approvals"]');
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('navpanel-approvals');
+  if (panel) panel.classList.add('active');
+
+  // 2. Update counts
+  const pendingCount = _allRequests.filter(r => r.status === 'pending').length;
+  document.getElementById('pendingCount').textContent = pendingCount;
+
+  // 3. Sync the dropdown to reflect the current filter
+  const sel = document.getElementById('approvalFilter');
+  if (sel) sel.value = statusDropdown;
+
+  // 4. Track active type filter for dropdown interaction
+  _activeTypeFilter = typeFilter;
+
+  // 5. Render the filtered cards (already in display order from caller)
+  renderFilteredRequests(filtered);
+}
+
+
 async function doApprove(id) {
   try {
-    const res  = await fetch(`${API}/approve/${id}`, { method: 'POST' });
+    const res  = await apiFetch(`${API}/approve/${id}`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
       toast(`Approved! ${data.workflowResult?.message || ''}`, 'success');
@@ -1188,7 +1503,7 @@ async function doApprove(id) {
 
 async function doReject(id) {
   try {
-    const res  = await fetch(`${API}/reject/${id}`, { method: 'POST' });
+    const res  = await apiFetch(`${API}/reject/${id}`, { method: 'POST' });
     const data = await res.json();
     if (data.success) { toast('Request rejected', 'warning'); loadRequests(); refreshCounts(); }
     else toast(data.message, 'error');
@@ -1199,12 +1514,12 @@ async function doReject(id) {
 async function loadUsers() {
   const el = document.getElementById('usersGrid');
   try {
-    const res  = await fetch(`${API}/users`);
+    const res  = await apiFetch(`${API}/users`);
     const data = await res.json();
     _allUsers = data.users || [];
     document.getElementById('usersCount').textContent = data.count;
     if (data.count === 0) {
-      el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">👤</div><span>No users yet. Try onboarding someone!</span></div>';
+      el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><i class="fa-solid fa-user-tie"></i></div><span>No users yet. Try onboarding someone!</span></div>';
       return;
     }
     el.innerHTML = data.users.map(u => {
@@ -1223,7 +1538,7 @@ async function loadUsers() {
       </div>`;
     }).join('');
   } catch(e) {
-    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">⚠️</div><span>Could not load users</span></div>';
+    el.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span>Could not load users</span></div>';
   }
 }
 
@@ -1231,12 +1546,12 @@ async function loadUsers() {
 async function loadLogs() {
   const el = document.getElementById('logList');
   try {
-    const res  = await fetch(`${API}/logs`);
+    const res  = await apiFetch(`${API}/logs`);
     const data = await res.json();
     _allLogs = data.logs || [];
     document.getElementById('logsCount').textContent = data.count;
     if (data.count === 0) {
-      el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><span>No audit logs yet</span></div>';
+      el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-inbox"></i></div><span>No audit logs yet</span></div>';
       return;
     }
     el.innerHTML = data.logs.map(l => `
@@ -1245,7 +1560,7 @@ async function loadLogs() {
         <div class="log-body">
           <span class="log-user">${escHtml(l.user)}</span>
           <span class="log-action"> — ${escHtml(l.action)}</span>
-          ${l.critical ? ' <span class="critical-flag">⚠ CRITICAL</span>' : ''}
+          ${l.critical ? ' <span class="critical-flag"><i class="fa-solid fa-triangle-exclamation"></i> CRITICAL</span>' : ''}
           ${l.details ? `<div class="log-detail">${escHtml(l.details)}</div>` : ''}
         </div>
         <div>
@@ -1254,7 +1569,7 @@ async function loadLogs() {
         </div>
       </div>`).join('');
   } catch(e) {
-    el.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><span>Could not load logs</span></div>';
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><span>Could not load logs</span></div>';
   }
 }
 
@@ -1262,9 +1577,9 @@ async function loadLogs() {
 async function refreshCounts() {
   try {
     const [r, u, l] = await Promise.all([
-      fetch(`${API}/requests`).then(r=>r.json()),
-      fetch(`${API}/users`).then(r=>r.json()),
-      fetch(`${API}/logs`).then(r=>r.json()),
+      apiFetch(`${API}/requests`).then(r=>r.json()),
+      apiFetch(`${API}/users`).then(r=>r.json()),
+      apiFetch(`${API}/logs`).then(r=>r.json()),
     ]);
     const pending = r.requests.filter(x => x.status === 'pending').length;
     document.getElementById('hdr-users').textContent   = u.count   || 0;
@@ -1284,12 +1599,8 @@ let _allRequests = [];
 let _allUsers    = [];
 let _allLogs     = [];
 
-// ── Approval filter (dropdown) ─────────────────────────────────────────────
-function filterApprovals() {
-  const val = document.getElementById('approvalFilter')?.value || 'all';
-  const src = val === 'all' ? _allRequests : _allRequests.filter(r => r.status === val);
-  renderFilteredRequests(src);
-}
+// filterApprovals() is defined above near loadRequests()
+
 
 // ── User search + status filter ────────────────────────────────────────────
 function filterUsers() {
@@ -1325,14 +1636,14 @@ function exportLogs() {
   );
   const csv = [header, ...rows].join('\n');
   navigator.clipboard.writeText(csv)
-    .then(() => toast('Logs copied to clipboard as CSV ✓', 'success'))
+    .then(() => toast('Logs copied to clipboard as CSV <i class="fa-solid fa-check"></i>', 'success'))
     .catch(() => toast('Copy failed — check clipboard permissions', 'error'));
 }
 
 // ── Reset demo data ────────────────────────────────────────────────────────
 async function doResetDemo() {
   try {
-    const res = await fetch(`${API}/reset`, { method: 'POST' });
+    const res = await apiFetch(`${API}/reset`, { method: 'POST' });
     const data = await res.json();
     if (data.success) {
       toast('Demo data reset! Reloading dashboard…', 'info', 3000);

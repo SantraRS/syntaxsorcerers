@@ -16,6 +16,7 @@ const path         = require("path");
 const logger       = require("./utils/logger");
 
 // ── Route modules ──────────────────────────────────────────────────────────
+const authRoutes     = require("./routes/authRoutes");
 const chatRoutes     = require("./routes/chatRoutes");
 const approvalRoutes = require("./routes/approvalRoutes");
 const userRoutes     = require("./routes/userRoutes");
@@ -55,6 +56,9 @@ app.use((req, _res, next) => {
 });
 
 // ── API Routes ─────────────────────────────────────────────────────────────
+
+// POST /auth/login — Simulated credential validation
+app.use("/auth", authRoutes);
 
 // POST /chat — Natural language message intake
 app.use("/chat", chatRoutes);

@@ -22,9 +22,9 @@ const logger                  = require("../utils/logger");
  * @returns {Object} The created request object
  */
 async function createRequest(type, user, role, previousRole = null) {
-  // ALL requests require manager approval regardless of type or role
-  // Manager must explicitly approve JOINER, MOVER, and LEAVER requests
-  const status = "pending";
+  // JOINER + MOVER → always pending, Manager must approve before provisioning
+  // LEAVER → auto-approved, offboarding executes immediately (IT Admin sees result)
+  const status = type === "LEAVER" ? "approved" : "pending";
 
   const request = addRequest({
     id:           uuidv4(),
@@ -38,7 +38,7 @@ async function createRequest(type, user, role, previousRole = null) {
   });
 
   logger.info(
-    `Request created — ID: ${request.id} | Type: ${type} | User: ${user} | Status: ${status}`
+    `Request created — ID: ${request.id} | Type: ${type} | User: ${user} | Role: ${role || "N/A"} | Status: ${status}`
   );
 
   return request;

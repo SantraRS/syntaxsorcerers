@@ -29,7 +29,14 @@ async function listRequests(req, res) {
       });
     }
 
-    const requests = getAllRequests(status || undefined);
+    const role = req.headers["x-user-role"];
+    let requests = getAllRequests(status || undefined);
+
+    if (role === "hr") {
+      requests = [];
+    } else if (role === "manager") {
+      requests = requests.filter(r => r.type !== "LEAVER");
+    }
 
     return res.status(200).json({
       success: true,
